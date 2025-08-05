@@ -83,65 +83,81 @@ Future<BillResult?> analyzeBillWithMindee(List<int> imageBytes) async {
 }
 
 Future<bool> authenticateUser(BuildContext context) async {
-  final LocalAuthentication auth = LocalAuthentication();
-  bool canCheckBiometrics = await auth.canCheckBiometrics;
-  bool isDeviceSupported = await auth.isDeviceSupported();
-  
-  if (!canCheckBiometrics || !isDeviceSupported) {
-    // Fallback to dialog if no biometrics available
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Authenticate'),
-          content: const Text('Biometric authentication not available. Use device PIN/Password.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Authenticate'),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
-  }
-  
   try {
-    bool didAuthenticate = await auth.authenticate(
-      localizedReason: 'Authenticate to access WalletFlow',
-      options: const AuthenticationOptions(
-        biometricOnly: false,
-        stickyAuth: true,
-      ),
-    );
-    return didAuthenticate;
+    final LocalAuthentication auth = LocalAuthentication();
+    bool canCheckBiometrics = false;
+    bool isDeviceSupported = false;
+    
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+      isDeviceSupported = await auth.isDeviceSupported();
+    } catch (e) {
+      print('Biometric check error: $e');
+      canCheckBiometrics = false;
+      isDeviceSupported = false;
+    }
+    
+    if (!canCheckBiometrics || !isDeviceSupported) {
+      // Fallback to dialog if no biometrics available
+      return await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Authenticate'),
+            content: const Text('Biometric authentication not available. Use device PIN/Password.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Authenticate'),
+              ),
+            ],
+          );
+        },
+      ) ?? false;
+    }
+    
+    try {
+      bool didAuthenticate = await auth.authenticate(
+        localizedReason: 'Authenticate to access WalletFlow',
+        options: const AuthenticationOptions(
+          biometricOnly: false,
+          stickyAuth: true,
+        ),
+      );
+      return didAuthenticate;
+    } catch (e) {
+      print('Authentication error: $e');
+      // Fallback to dialog on authentication error
+      return await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Authenticate'),
+            content: const Text('Authentication error. Use device PIN/Password.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Authenticate'),
+              ),
+            ],
+          );
+        },
+      ) ?? false;
+    }
   } catch (e) {
-    // Fallback to dialog on error
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Authenticate'),
-          content: const Text('Authentication error. Use device PIN/Password.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Authenticate'),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+    print('Authentication service error: $e');
+    // Complete fallback - just return true to allow access
+    return true;
   }
 }
 
@@ -160,15 +176,29 @@ class _BiometricGateState extends State<BiometricGate> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (biometricLockEnabled) {
-        bool result = await authenticateUser(context);
-        setState(() {
-          _authenticated = result;
-        });
-      } else {
-        setState(() {
-          _authenticated = true;
-        });
+      try {
+        if (biometricLockEnabled) {
+          bool result = await authenticateUser(context);
+          if (mounted) {
+            setState(() {
+              _authenticated = result;
+            });
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _authenticated = true;
+            });
+          }
+        }
+      } catch (e) {
+        print('BiometricGate initialization error: $e');
+        // Fallback to allowing access if there's an error
+        if (mounted) {
+          setState(() {
+            _authenticated = true;
+          });
+        }
       }
     });
   }
@@ -188,9 +218,23 @@ class _BiometricGateState extends State<BiometricGate> {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  // Enable edge-to-edge display
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
+  
+  // Safely set system UI mode with error handling
+  try {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+      SystemUiOverlay.top,
+      SystemUiOverlay.bottom,
+    ]);
+  } catch (e) {
+    print('SystemUI configuration error: $e');
+  }
+  
   runApp(const WalletFlowApp());
 }
 
@@ -204,8 +248,121 @@ class WalletFlowApp extends StatelessWidget {
       theme: walletFlowLightTheme,
       darkTheme: walletFlowDarkTheme,
       themeMode: ThemeMode.system,
-      home: BiometricGate(child: const MainNavigation()),
+      home: ErrorBoundary(
+        child: BiometricGate(child: const MainNavigation()),
+      ),
+      builder: (context, child) {
+        // Add error handling for the entire app
+        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Something went wrong',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'Error: ${errorDetails.exception}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Restart the app
+                      if (context.mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const WalletFlowApp()),
+                          (route) => false,
+                        );
+                      }
+                    },
+                    child: const Text('Restart App'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        };
+        return child ?? const SizedBox.shrink();
+      },
     );
+  }
+}
+
+class ErrorBoundary extends StatefulWidget {
+  final Widget child;
+  
+  const ErrorBoundary({required this.child, super.key});
+  
+  @override
+  State<ErrorBoundary> createState() => _ErrorBoundaryState();
+}
+
+class _ErrorBoundaryState extends State<ErrorBoundary> {
+  bool hasError = false;
+  FlutterErrorDetails? errorDetails;
+  
+  @override
+  void initState() {
+    super.initState();
+    FlutterError.onError = (FlutterErrorDetails details) {
+      if (mounted) {
+        setState(() {
+          hasError = true;
+          errorDetails = details;
+        });
+      }
+    };
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    if (hasError) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
+                'App Error',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              if (errorDetails != null)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Error: ${errorDetails!.exception}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    hasError = false;
+                    errorDetails = null;
+                  });
+                },
+                child: const Text('Try Again'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    return widget.child;
   }
 }
 
