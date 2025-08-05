@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final glassmorphismCardDecoration = BoxDecoration(
   color: Colors.white.withOpacity(0.15),
@@ -18,6 +19,7 @@ final glassmorphismCardDecoration = BoxDecoration(
 
 ThemeData walletFlowLightTheme = ThemeData(
   useMaterial3: true,
+  textTheme: GoogleFonts.montserratTextTheme(),
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.indigo,
     brightness: Brightness.light,
@@ -39,13 +41,20 @@ ThemeData walletFlowLightTheme = ThemeData(
     backgroundColor: Colors.white.withOpacity(0.9),
     indicatorColor: Colors.indigo.withOpacity(0.2),
     labelTextStyle: WidgetStateProperty.all(
-      const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600),
+    ),
+  ),
+  appBarTheme: AppBarTheme(
+    titleTextStyle: GoogleFonts.montserrat(
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
     ),
   ),
 );
 
 ThemeData walletFlowDarkTheme = ThemeData(
   useMaterial3: true,
+  textTheme: GoogleFonts.montserratTextTheme(ThemeData.dark().textTheme),
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.indigo,
     brightness: Brightness.dark,
@@ -67,7 +76,13 @@ ThemeData walletFlowDarkTheme = ThemeData(
     backgroundColor: Colors.black.withOpacity(0.9),
     indicatorColor: Colors.indigo.withOpacity(0.3),
     labelTextStyle: WidgetStateProperty.all(
-      const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600),
+    ),
+  ),
+  appBarTheme: AppBarTheme(
+    titleTextStyle: GoogleFonts.montserrat(
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
     ),
   ),
 );

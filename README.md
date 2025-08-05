@@ -1,4 +1,4 @@
-# ProfitAI / WalletFlow
+# WalletFlow
 
 A new Flutter project.
 

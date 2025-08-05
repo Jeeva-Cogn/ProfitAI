@@ -59,14 +59,14 @@ class BudgetProgress extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$${spent.toStringAsFixed(0)}',
+                  '₹${spent.toStringAsFixed(0)}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: percentage > 0.8 ? Colors.red : color,
                   ),
                 ),
                 Text(
-                  'of \$${budget.toStringAsFixed(0)}',
+                  'of ₹${budget.toStringAsFixed(0)}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                   ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "28726128333",
+    "project_id": "walletflow-e2959",
+    "storage_bucket": "walletflow-e2959.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28726128333:android:6279d600ca11ee97c74384",
+        "android_client_info": {
+          "package_name": "Wallet.flow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCczn6IJQFPnUrjF2muiVudci6Cfnem0IY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
