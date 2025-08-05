@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:28726128333:android:6279d600ca11ee97c74384",
         "android_client_info": {
-          "package_name": "Wallet.flow"
+          "package_name": "com.walletflow.app"
         }
       },
       "oauth_client": [],

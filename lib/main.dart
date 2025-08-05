@@ -62,14 +62,13 @@ Future<BillResult?> analyzeBillWithMindee(List<int> imageBytes) async {
       Uri.parse(url),
       headers: {
         'Authorization': 'Token $apiKey',
-        'Content-Type': 'application/pdf', // or 'image/jpeg' if using JPEG
+        'Content-Type': 'application/pdf',
       },
       body: imageBytes,
     );
     
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      // Parse Mindee response for amount, merchant, date, category
       final amount = double.tryParse(data['document']['inference']['prediction']['total_amount']['value']?.toString() ?? '') ?? 0.0;
       final merchant = data['document']['inference']['prediction']['supplier_name']['value'] ?? '';
       final date = data['document']['inference']['prediction']['date']['value'] ?? '';
@@ -93,32 +92,11 @@ Future<bool> authenticateUser(BuildContext context) async {
       isDeviceSupported = await auth.isDeviceSupported();
     } catch (e) {
       print('Biometric check error: $e');
-      canCheckBiometrics = false;
-      isDeviceSupported = false;
+      return true; // Fallback to allowing access
     }
     
     if (!canCheckBiometrics || !isDeviceSupported) {
-      // Fallback to dialog if no biometrics available
-      return await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Authenticate'),
-            content: const Text('Biometric authentication not available. Use device PIN/Password.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Authenticate'),
-              ),
-            ],
-          );
-        },
-      ) ?? false;
+      return true; // Allow access if biometrics not available
     }
     
     try {
@@ -132,32 +110,11 @@ Future<bool> authenticateUser(BuildContext context) async {
       return didAuthenticate;
     } catch (e) {
       print('Authentication error: $e');
-      // Fallback to dialog on authentication error
-      return await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Authenticate'),
-            content: const Text('Authentication error. Use device PIN/Password.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Authenticate'),
-              ),
-            ],
-          );
-        },
-      ) ?? false;
+      return true; // Fallback to allowing access
     }
   } catch (e) {
     print('Authentication service error: $e');
-    // Complete fallback - just return true to allow access
-    return true;
+    return true; // Complete fallback
   }
 }
 
@@ -193,7 +150,6 @@ class _BiometricGateState extends State<BiometricGate> {
         }
       } catch (e) {
         print('BiometricGate initialization error: $e');
-        // Fallback to allowing access if there's an error
         if (mounted) {
           setState(() {
             _authenticated = true;
@@ -225,11 +181,11 @@ void main() async {
     print('Firebase initialization error: $e');
   }
   
-  // Safely set system UI mode with error handling
+  // Safely set system UI mode
   try {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
-      SystemUiOverlay.top,
-      SystemUiOverlay.bottom,
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]);
   } catch (e) {
     print('SystemUI configuration error: $e');
@@ -248,11 +204,8 @@ class WalletFlowApp extends StatelessWidget {
       theme: walletFlowLightTheme,
       darkTheme: walletFlowDarkTheme,
       themeMode: ThemeMode.system,
-      home: ErrorBoundary(
-        child: BiometricGate(child: const MainNavigation()),
-      ),
+      home: BiometricGate(child: const MainNavigation()),
       builder: (context, child) {
-        // Add error handling for the entire app
         ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
           return Scaffold(
             body: Center(
@@ -266,23 +219,14 @@ class WalletFlowApp extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      'Error: ${errorDetails.exception}',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
+                  const Text('Please restart the app'),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // Restart the app
-                      if (context.mounted) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => const WalletFlowApp()),
-                          (route) => false,
-                        );
-                      }
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const WalletFlowApp()),
+                        (route) => false,
+                      );
                     },
                     child: const Text('Restart App'),
                   ),
@@ -294,75 +238,6 @@ class WalletFlowApp extends StatelessWidget {
         return child ?? const SizedBox.shrink();
       },
     );
-  }
-}
-
-class ErrorBoundary extends StatefulWidget {
-  final Widget child;
-  
-  const ErrorBoundary({required this.child, super.key});
-  
-  @override
-  State<ErrorBoundary> createState() => _ErrorBoundaryState();
-}
-
-class _ErrorBoundaryState extends State<ErrorBoundary> {
-  bool hasError = false;
-  FlutterErrorDetails? errorDetails;
-  
-  @override
-  void initState() {
-    super.initState();
-    FlutterError.onError = (FlutterErrorDetails details) {
-      if (mounted) {
-        setState(() {
-          hasError = true;
-          errorDetails = details;
-        });
-      }
-    };
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    if (hasError) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              const Text(
-                'App Error',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              if (errorDetails != null)
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'Error: ${errorDetails!.exception}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    hasError = false;
-                    errorDetails = null;
-                  });
-                },
-                child: const Text('Try Again'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    
-    return widget.child;
   }
 }
 
@@ -476,22 +351,35 @@ class DashboardScreen extends StatelessWidget {
                               Expanded(
                                 child: ElevatedButton.icon(
                                   onPressed: () async {
-                                    final auth = AuthService();
-                                    final user = await auth.signInWithGoogle();
-                                    if (user != null) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Signed in as ${user.displayName ?? user.email ?? 'Google user'}'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Google sign-in failed.'),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
+                                    try {
+                                      final auth = AuthService();
+                                      final user = await auth.signInWithGoogle();
+                                      if (context.mounted) {
+                                        if (user != null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Signed in as ${user.displayName ?? user.email ?? 'Google user'}'),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Google sign-in failed.'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Sign-in error: $e'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                                     }
                                   },
                                   icon: const Icon(Icons.login, size: 24),
@@ -538,7 +426,7 @@ class DashboardScreen extends StatelessWidget {
                                               Navigator.pop(context);
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(
-                                                  content: Text('Scan bill/transcript Mindee API integration placeholder.'), 
+                                                  content: Text('Scan bill/transcript feature coming soon!'), 
                                                   backgroundColor: Colors.indigo
                                                 ),
                                               );
@@ -656,22 +544,35 @@ class DashboardScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           TextButton(
                             onPressed: () async {
-                              final auth = AuthService();
-                              final user = await auth.continueAsGuest();
-                              if (user != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Continuing as guest.'),
-                                    backgroundColor: Colors.orange,
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Guest sign-in failed.'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                              try {
+                                final auth = AuthService();
+                                final user = await auth.continueAsGuest();
+                                if (context.mounted) {
+                                  if (user != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Continuing as guest.'),
+                                        backgroundColor: Colors.orange,
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Guest sign-in failed.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Guest sign-in error: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               }
                             },
                             child: Text(
@@ -707,25 +608,21 @@ class DashboardScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Flexible(
-                            child: BudgetProgress(
-                              title: 'Budget',
-                              spent: 6500,
-                              budget: 10000,
-                              icon: Icons.account_balance_wallet,
-                              color: Colors.green,
-                            ),
+                          BudgetProgress(
+                            title: 'Budget',
+                            spent: 6500,
+                            budget: 10000,
+                            icon: Icons.account_balance_wallet,
+                            color: Colors.green,
                           ),
                           const SizedBox(height: 20),
-                          Flexible(
-                            child: CategoryPieChart(
-                              data: {
-                                'Food': 2500.0,
-                                'Shopping': 1800.0,
-                                'Bills': 1200.0,
-                                'Personal': 1000.0,
-                              },
-                            ),
+                          CategoryPieChart(
+                            data: {
+                              'Food': 2500.0,
+                              'Shopping': 1800.0,
+                              'Bills': 1200.0,
+                              'Personal': 1000.0,
+                            },
                           ),
                         ],
                       ),

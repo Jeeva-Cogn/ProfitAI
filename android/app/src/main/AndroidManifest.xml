@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.walletflow.app">
     
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -6,7 +7,7 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     
     <application
-        android:label="walletflow"
+        android:label="WalletFlow"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
