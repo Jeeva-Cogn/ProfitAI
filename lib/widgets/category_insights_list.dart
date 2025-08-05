@@ -72,10 +72,10 @@ class CategoryInsightsList extends StatelessWidget {
           
           return Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -85,7 +85,7 @@ class CategoryInsightsList extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(category).withOpacity(0.2),
+                  color: _getCategoryColor(category).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -97,14 +97,14 @@ class CategoryInsightsList extends StatelessWidget {
               title: Text(
                 category,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: Text(
                 '$percentage% of total spending',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                 ),
               ),
               trailing: Column(
@@ -123,7 +123,7 @@ class CategoryInsightsList extends StatelessWidget {
                     height: 4,
                     margin: const EdgeInsets.only(top: 4),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(category).withOpacity(0.3),
+                      color: _getCategoryColor(category).withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: FractionallySizedBox(

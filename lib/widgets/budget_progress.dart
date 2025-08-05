@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
 import 'glass_card.dart';
 
 class BudgetProgress extends StatelessWidget {
@@ -29,46 +28,65 @@ class BudgetProgress extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 20,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(icon, color: color, size: 28),
+                      SizedBox(width: 8),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: color), overflow: TextOverflow.ellipsis),
+                      ),
+                      Spacer(),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Text('\u20b9$spent / \u20b9$budget', style: TextStyle(color: Colors.white), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '₹${spent.toStringAsFixed(0)}',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: percentage > 0.8 ? Colors.red : color,
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    '₹${spent.toStringAsFixed(0)}',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: percentage > 0.8 ? Colors.red : color,
+                    ),
                   ),
                 ),
-                Text(
-                  'of ₹${budget.toStringAsFixed(0)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    'of ₹${budget.toStringAsFixed(0)}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                    ),
                   ),
                 ),
               ],
@@ -78,7 +96,7 @@ class BudgetProgress extends StatelessWidget {
               height: 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
@@ -89,7 +107,7 @@ class BudgetProgress extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: percentage > 0.8 
                           ? [Colors.orange, Colors.red]
-                          : [color.withOpacity(0.7), color],
+                          : [color.withValues(alpha: 0.7), color],
                     ),
                   ),
                 ),

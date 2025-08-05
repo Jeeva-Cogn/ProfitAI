@@ -70,7 +70,7 @@ Future<BillResult?> analyzeBillWithMindee(List<int> imageBytes) async {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       // Parse Mindee response for amount, merchant, date, category
-      final amount = double.tryParse(data['document']['inference']['prediction']['total_amount']['value'].toString() ?? '') ?? 0.0;
+      final amount = double.tryParse(data['document']['inference']['prediction']['total_amount']['value']?.toString() ?? '') ?? 0.0;
       final merchant = data['document']['inference']['prediction']['supplier_name']['value'] ?? '';
       final date = data['document']['inference']['prediction']['date']['value'] ?? '';
       final category = data['document']['inference']['prediction']['category']['value'] ?? '';
@@ -277,11 +277,14 @@ class DashboardScreen extends StatelessWidget {
                             children: [
                               const WalletFlowLogo(size: 64),
                               const SizedBox(width: 12),
-                              Text(
-                                'WalletFlow ✨',
-                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                              Flexible(
+                                child: Text(
+                                  'WalletFlow ✨',
+                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -290,7 +293,7 @@ class DashboardScreen extends StatelessWidget {
                           Text(
                             'Your AI-powered personal finance tracker',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                             textAlign: TextAlign.left,
                           ),
@@ -358,7 +361,7 @@ class DashboardScreen extends StatelessWidget {
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                                   ),
-                                  backgroundColor: Colors.black.withOpacity(0.95),
+                                  backgroundColor: Colors.black.withValues(alpha: 0.95),
                                   builder: (context) {
                                     return Padding(
                                       padding: const EdgeInsets.all(24),
@@ -403,7 +406,7 @@ class DashboardScreen extends StatelessWidget {
                                                   String amount = '';
                                                   String category = '';
                                                   return AlertDialog(
-                                                    backgroundColor: Colors.black.withOpacity(0.95),
+                                                    backgroundColor: Colors.black.withValues(alpha: 0.95),
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                                                     title: Text(
                                                       'Add Expense Manually', 
@@ -547,21 +550,25 @@ class DashboardScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const BudgetProgress(
-                            title: 'Budget',
-                            spent: 6500,
-                            budget: 10000,
-                            icon: Icons.account_balance_wallet,
-                            color: Colors.green,
+                          Flexible(
+                            child: BudgetProgress(
+                              title: 'Budget',
+                              spent: 6500,
+                              budget: 10000,
+                              icon: Icons.account_balance_wallet,
+                              color: Colors.green,
+                            ),
                           ),
                           const SizedBox(height: 20),
-                          const CategoryPieChart(
-                            data: {
-                              'Food': 2500.0,
-                              'Shopping': 1800.0,
-                              'Bills': 1200.0,
-                              'Personal': 1000.0,
-                            },
+                          Flexible(
+                            child: CategoryPieChart(
+                              data: {
+                                'Food': 2500.0,
+                                'Shopping': 1800.0,
+                                'Bills': 1200.0,
+                                'Personal': 1000.0,
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -578,9 +585,12 @@ class DashboardScreen extends StatelessWidget {
                   child: GlassCard(
                     child: const Padding(
                       padding: EdgeInsets.all(20),
-                      child: MotivationalQuote(
-                        quote: 'Small savings today lead to big achievements tomorrow. 💡',
-                        author: 'WalletFlow',
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: MotivationalQuote(
+                          quote: 'Small savings today lead to big achievements tomorrow. 💡',
+                          author: 'WalletFlow',
+                        ),
                       ),
                     ),
                   ),
@@ -713,7 +723,7 @@ class InsightsAdvisorScreen extends StatelessWidget {
                         Text(
                           'Premium financial insights and smart advice powered by AI.',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
                         ),
                       ],

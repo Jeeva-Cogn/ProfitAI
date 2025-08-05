@@ -25,7 +25,7 @@ class CategoryPieChart extends StatelessWidget {
           Text(
             'Spending by Category',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -52,7 +52,7 @@ class CategoryPieChart extends StatelessWidget {
                     Text(
                       'Total',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -84,7 +84,7 @@ class CategoryPieChart extends StatelessWidget {
                   Text(
                     '$category ($percentage%)',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],

@@ -16,15 +16,15 @@ class AIAdvisorCard extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -37,7 +37,7 @@ class AIAdvisorCard extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: Colors.pink.withOpacity(0.2),
+              color: Colors.pink.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
@@ -58,17 +58,17 @@ class AIAdvisorCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.pink.withOpacity(0.1),
+              color: Colors.pink.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.pink.withOpacity(0.3),
+                color: Colors.pink.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
             child: Text(
               trend,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.pink.withOpacity(0.9),
+                color: Colors.pink.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -78,7 +78,7 @@ class AIAdvisorCard extends StatelessWidget {
           Text(
             advice,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -92,7 +92,7 @@ class AIAdvisorCard extends StatelessWidget {
                 icon: const Icon(Icons.thumb_up, size: 16),
                 label: const Text('Helpful'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.withOpacity(0.2),
+                  backgroundColor: Colors.green.withValues(alpha: 0.2),
                   foregroundColor: Colors.green,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -104,7 +104,7 @@ class AIAdvisorCard extends StatelessWidget {
                 label: const Text('More Tips'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
               ),

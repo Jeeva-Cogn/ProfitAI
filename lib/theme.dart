@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final glassmorphismCardDecoration = BoxDecoration(
-  color: Colors.white.withOpacity(0.15),
+  color: Colors.white.withValues(alpha: 0.15),
   borderRadius: BorderRadius.circular(20),
   boxShadow: [
     BoxShadow(
-      color: Colors.black.withOpacity(0.05),
+      color: Colors.black.withValues(alpha: 0.05),
       blurRadius: 10,
       offset: const Offset(0, 4),
     ),
   ],
   border: Border.all(
-    color: Colors.white.withOpacity(0.2),
+    color: Colors.white.withValues(alpha: 0.2),
     width: 1.5,
   ),
 );
@@ -28,7 +28,7 @@ ThemeData walletFlowLightTheme = ThemeData(
   cardTheme: CardThemeData(
     elevation: 0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    color: Colors.white.withOpacity(0.15),
+    color: Colors.white.withValues(alpha: 0.15),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -38,8 +38,8 @@ ThemeData walletFlowLightTheme = ThemeData(
     ),
   ),
   navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: Colors.white.withOpacity(0.9),
-    indicatorColor: Colors.indigo.withOpacity(0.2),
+    backgroundColor: Colors.white.withValues(alpha: 0.9),
+    indicatorColor: Colors.indigo.withValues(alpha: 0.2),
     labelTextStyle: WidgetStateProperty.all(
       GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600),
     ),
@@ -63,7 +63,7 @@ ThemeData walletFlowDarkTheme = ThemeData(
   cardTheme: CardThemeData(
     elevation: 0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    color: Colors.white.withOpacity(0.10),
+    color: Colors.white.withValues(alpha: 0.10),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -73,8 +73,8 @@ ThemeData walletFlowDarkTheme = ThemeData(
     ),
   ),
   navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: Colors.black.withOpacity(0.9),
-    indicatorColor: Colors.indigo.withOpacity(0.3),
+    backgroundColor: Colors.black.withValues(alpha: 0.9),
+    indicatorColor: Colors.indigo.withValues(alpha: 0.3),
     labelTextStyle: WidgetStateProperty.all(
       GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600),
     ),

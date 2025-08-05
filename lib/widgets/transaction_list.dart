@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'glass_card.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
@@ -59,10 +58,10 @@ class TransactionList extends StatelessWidget {
           
           return Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -72,7 +71,7 @@ class TransactionList extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(merchant).withOpacity(0.2),
+                  color: _getCategoryColor(merchant).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -84,14 +83,14 @@ class TransactionList extends StatelessWidget {
               title: Text(
                 merchant,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: Text(
                 date,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                 ),
               ),
               trailing: Text(
