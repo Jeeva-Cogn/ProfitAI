@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Flutter
+      - name: Set up Flutter (master channel)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          channel: master
       - name: Install dependencies
         run: flutter pub get
       - name: Build APK
