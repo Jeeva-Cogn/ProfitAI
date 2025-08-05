@@ -23,7 +23,7 @@ ThemeData walletFlowLightTheme = ThemeData(
     brightness: Brightness.light,
   ),
   brightness: Brightness.light,
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     elevation: 0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     color: Colors.white.withOpacity(0.15),
@@ -51,7 +51,7 @@ ThemeData walletFlowDarkTheme = ThemeData(
     brightness: Brightness.dark,
   ),
   brightness: Brightness.dark,
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     elevation: 0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     color: Colors.white.withOpacity(0.10),

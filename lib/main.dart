@@ -209,14 +209,20 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    BudgetProgress(percent: 0.65, budget: 10000, spent: 6500),
+                    BudgetProgress(
+                      title: 'Budget',
+                      spent: 6500,
+                      budget: 10000,
+                      icon: Icons.account_balance_wallet,
+                      color: Colors.green,
+                    ),
                     const SizedBox(height: 20),
                     CategoryPieChart(
                       data: {
-                        'Food': 2500,
-                        'Shopping': 1800,
-                        'Bills': 1200,
-                        'Personal': 1000,
+                        'Food': 2500.0,
+                        'Shopping': 1800.0,
+                        'Bills': 1200.0,
+                        'Personal': 1000.0,
                       },
                     ),
                   ],
@@ -256,10 +262,10 @@ class CategoryInsightsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final insights = {
-      'Food': 2500,
-      'Shopping': 1800,
-      'Bills': 1200,
-      'Personal': 1000,
+      'Food': 2500.0,
+      'Shopping': 1800.0,
+      'Bills': 1200.0,
+      'Personal': 1000.0,
     };
     return GradientBackground(
       child: CategoryInsightsList(insights: insights),
